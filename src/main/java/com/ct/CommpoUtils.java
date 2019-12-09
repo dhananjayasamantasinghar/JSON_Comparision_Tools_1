@@ -68,10 +68,14 @@ public class CommpoUtils {
 
 		for (Field field2 : declaredFields1) {
 			Method[] declaredMethods = obj2.getClass().getDeclaredMethods();
+			String[] split = field2.toGenericString().split(" ");
+			String className = split[1];
+			String newValue = value;
+			if (className.contains(value)) {
+				newValue = field2.getName();
+			}
 			for (Method method : declaredMethods) {
-				if (method.getName().equalsIgnoreCase("set" + value)) {
-					String[] split = field2.toGenericString().split(" ");
-					String className = split[1];
+				if (method.getName().equalsIgnoreCase("set" + newValue)) {
 					Object obj = Class.forName(className).newInstance();
 					method.invoke(obj2, obj);
 					objectFactory.put(values[i - 1], obj2);
@@ -96,6 +100,8 @@ public class CommpoUtils {
 				Object obj = Class.forName(className).newInstance();
 				Method[] declaredMethods = obj.getClass().getDeclaredMethods();
 				boolean flag = false;
+
+				// TODO CHECK
 				for (Method method : declaredMethods) {
 					if (method.getName().equalsIgnoreCase("set" + values[values.length - 1])) {
 						field.setAccessible(true);
@@ -110,12 +116,14 @@ public class CommpoUtils {
 						}
 					}
 				}
+
 				// complex inside compl ex
 				if (!flag) {
 					for (Method method : poa_Employee.getClass().getDeclaredMethods()) {
 						if (method.getName().equalsIgnoreCase("set" + newValue)) {
 							method.invoke(poa_Employee, obj);
 							objectFactory.put(value, obj);
+							break;
 						}
 					}
 				}
